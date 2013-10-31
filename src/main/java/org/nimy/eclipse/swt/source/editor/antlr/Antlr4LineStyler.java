@@ -2,9 +2,7 @@ package org.nimy.eclipse.swt.source.editor.antlr;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -13,14 +11,14 @@ import org.antlr.v4.runtime.Token;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
-import org.nimy.eclipse.swt.source.editor.antlr.xml.XmlColorSchema;
 
 import com.google.common.base.Preconditions;
 
-public class Antlr4LineStyler<T extends Lexer> implements AntlrLineStyler<T>, ColorSchema {
-	private T lexer;
-	private ColorSchema schema = new XmlColorSchema();
-	private Map<Integer, StyleRange[]> lineStyles;
+public class Antlr4LineStyler implements AntlrLineStyler {
+
+	private Lexer lexer;
+	protected ColorSchema colorSchema;
+	protected FontSchema fontSchema;
 	private StyleRange[] pageStyles;
 
 	public Antlr4LineStyler() {
@@ -29,49 +27,73 @@ public class Antlr4LineStyler<T extends Lexer> implements AntlrLineStyler<T>, Co
 	public void parse(final StyledText styleText) {
 		Preconditions.checkState(lexer != null);
 		lexer.setInputStream(new ANTLRInputStream(styleText.getText()));
-		Token nextToken = lexer.nextToken();
+		Token prevToken = null;
+		Token token = lexer.nextToken();
 		int line = 1;
-		List<StyleRange> stylesPerLine = new ArrayList<StyleRange>();
 		List<StyleRange> stylesList = new ArrayList<StyleRange>();
-		lineStyles = new HashMap<Integer, StyleRange[]>();
-		while (nextToken != null && nextToken.getType() != -1) {
-			iterateToken(nextToken);
-			if (line != nextToken.getLine()) {
-				lineStyles.put(line, stylesPerLine.toArray(new StyleRange[0]));
-				stylesPerLine.clear();
-				line = nextToken.getLine();
+		while (token != null && token.getType() != -1) {
+			iterateToken(token);
+			if (line != token.getLine()) {
+				line = token.getLine();
 			}
-			StyleRange style = new StyleRange(nextToken.getStartIndex(), nextToken.getText().length(), getColor(nextToken.getType()), null);
+			StyleRange style = new StyleRange(token.getStartIndex(), token.getText().length(), getColor(lexer, token, prevToken), null);
+			int fontStyle = getFontStyle(token.getType());
+			if (fontStyle != style.fontStyle) {
+				style.fontStyle = fontStyle;
+			}
 			stylesList.add(style);
-			stylesPerLine.add(style);
-			nextToken = lexer.nextToken();
+			prevToken = token;
+			token = lexer.nextToken();
+
 		}
 		pageStyles = stylesList.toArray(new StyleRange[0]);
 		styleText.setStyleRanges(pageStyles);
 		styleText.redraw();
 	}
 
-	protected void iterateToken(Token nextToken) {
+	private int getFontStyle(int type) {
+		Preconditions.checkState(fontSchema != null);
+		return fontSchema.getFontStyle(type);
+	}
+
+	protected void iterateToken(Token token) {
 	}
 
 	@Override
-	public Color getColor(int type) {
-		return schema.getColor(type);
+	public Color getColor(final Lexer lexer, final Token token, final Token prev) {
+		Preconditions.checkState(colorSchema != null);
+		return colorSchema.getColor(token.getType());
 	}
 
-	public T getLexer() {
+	public Lexer getLexer() {
 		return lexer;
 	}
 
-	public void setLexerClass(Class<T> lexerClass) {
+	public void prepareLexer(Class<? extends Lexer> lexerClass) {
 		Preconditions.checkNotNull(lexerClass);
 		try {
-			Constructor<T> constructor = lexerClass.getConstructor(CharStream.class);
+			@SuppressWarnings("unchecked")
+			Constructor<Lexer> constructor = (Constructor<Lexer>) lexerClass.getConstructor(CharStream.class);
 			this.lexer = constructor.newInstance(new ANTLRInputStream());
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new IllegalStateException("Can not initialize a Lexer from " + lexerClass);
 		}
+	}
+
+	public ColorSchema getColorSchema() {
+		return colorSchema;
+	}
+
+	public void setColorSchema(ColorSchema colorSchema) {
+		this.colorSchema = colorSchema;
+	}
+
+	public FontSchema getFontSchema() {
+		return fontSchema;
+	}
+
+	public void setFontSchema(FontSchema fontSchema) {
+		this.fontSchema = fontSchema;
 	}
 
 }

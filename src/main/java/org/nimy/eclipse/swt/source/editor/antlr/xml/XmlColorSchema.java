@@ -28,7 +28,7 @@ public class XmlColorSchema implements ColorSchema {
 		case XMLLexer.XMLDeclOpen:
 			return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 		case XMLLexer.Name:
-			return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+			return Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA);
 		case XMLLexer.STRING:
 			return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 		case XMLLexer.PI:
@@ -40,6 +40,8 @@ public class XmlColorSchema implements ColorSchema {
 		case XMLLexer.CharRef:
 			return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 		case XMLLexer.SPECIAL_CLOSE:
+			return Display.getDefault().getSystemColor(SWT.COLOR_RED);
+		case 25:
 			return Display.getDefault().getSystemColor(SWT.COLOR_RED);
 		default:
 			return Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
