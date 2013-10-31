@@ -33,17 +33,17 @@ public class SimpleSourceComposite extends Composite {
 		styledText = new StyledText(this, SWT.V_SCROLL | SWT.BORDER);
 		Font font = new Font(getShell().getDisplay(), "Courier New", 16, SWT.BOLD);
 		styledText.setFont(font);
-		styledText.addLineStyleListener(new LineStyleListener() {
-			public void lineGetStyle(LineStyleEvent event) {
-				// Set the line number
-				event.bulletIndex = styledText.getLineAtOffset(event.lineOffset);
-				// Set the style, 12 pixles wide for each digit
-				StyleRange style = new StyleRange();
-				style.metrics = new GlyphMetrics(0, 0, Integer.toString(styledText.getLineCount() + 1).length() * 16);
-				// Create and set the bullet
-				event.bullet = new Bullet(ST.BULLET_NUMBER, style);
-			}
-		});
+//		styledText.addLineStyleListener(new LineStyleListener() {
+//			public void lineGetStyle(LineStyleEvent event) {
+//				// Set the line number
+//				event.bulletIndex = styledText.getLineAtOffset(event.lineOffset);
+//				// Set the style, 12 pixles wide for each digit
+//				StyleRange style = new StyleRange();
+//				style.metrics = new GlyphMetrics(0, 0, Integer.toString(styledText.getLineCount() + 1).length() * 12);
+//				// Create and set the bullet
+//				event.bullet = new Bullet(ST.BULLET_NUMBER, style);
+//			}
+//		});
 		styledText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				lineStyler.parse(styledText);

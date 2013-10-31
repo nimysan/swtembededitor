@@ -13,12 +13,13 @@ import org.antlr.v4.runtime.Token;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.nimy.eclipse.swt.source.editor.antlr.xml.XmlColorSchema;
 
 import com.google.common.base.Preconditions;
 
-public class Antlr4LineStyler<T extends Lexer> implements AntlrLineStyler<T> {
+public class Antlr4LineStyler<T extends Lexer> implements AntlrLineStyler<T>, ColorSchema {
 	private T lexer;
-	private Map<Integer, Color> colorSchemas = new HashMap<Integer, Color>();
+	private ColorSchema schema = new XmlColorSchema();
 	private Map<Integer, StyleRange[]> lineStyles;
 	private StyleRange[] pageStyles;
 
@@ -26,6 +27,8 @@ public class Antlr4LineStyler<T extends Lexer> implements AntlrLineStyler<T> {
 	}
 
 	public void parse(final StyledText styleText) {
+		Preconditions.checkState(lexer != null);
+		lexer.setInputStream(new ANTLRInputStream(styleText.getText()));
 		Token nextToken = lexer.nextToken();
 		int line = 1;
 		List<StyleRange> stylesPerLine = new ArrayList<StyleRange>();
@@ -38,16 +41,22 @@ public class Antlr4LineStyler<T extends Lexer> implements AntlrLineStyler<T> {
 				stylesPerLine.clear();
 				line = nextToken.getLine();
 			}
-			StyleRange style = new StyleRange(nextToken.getStartIndex(), nextToken.getText().length(), colorSchemas.get(nextToken.getType()), null);
+			StyleRange style = new StyleRange(nextToken.getStartIndex(), nextToken.getText().length(), getColor(nextToken.getType()), null);
 			stylesList.add(style);
 			stylesPerLine.add(style);
 			nextToken = lexer.nextToken();
 		}
 		pageStyles = stylesList.toArray(new StyleRange[0]);
 		styleText.setStyleRanges(pageStyles);
+		styleText.redraw();
 	}
 
 	protected void iterateToken(Token nextToken) {
+	}
+
+	@Override
+	public Color getColor(int type) {
+		return schema.getColor(type);
 	}
 
 	public T getLexer() {

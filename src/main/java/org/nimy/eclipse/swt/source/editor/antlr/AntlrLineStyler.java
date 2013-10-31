@@ -8,4 +8,5 @@ public interface AntlrLineStyler<T extends Lexer> {
 	public void parse(final StyledText styleText);
 
 	public T getLexer();
+	
 }
