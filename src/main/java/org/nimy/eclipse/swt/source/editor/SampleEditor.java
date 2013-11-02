@@ -6,9 +6,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.nimy.eclipse.swt.source.editor.antlr.Antlr4LineStyler;
-import org.nimy.eclipse.swt.source.editor.antlr.XmlFontSchema;
 import org.nimy.eclipse.swt.source.editor.antlr.xml.XmlAntlr4LineStyler;
 import org.nimy.eclipse.swt.source.editor.antlr.xml.XmlColorSchema;
+import org.nimy.eclipse.swt.source.editor.antlr.xml.XmlFontSchema;
 
 public class SampleEditor {
 	public static void main(String[] args) {

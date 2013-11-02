@@ -1,13 +1,12 @@
 package org.nimy.eclipse.swt.source.editor;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.eclipse.swt.custom.StyleRange;
+import org.antlr.v4.runtime.Token;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -40,18 +39,20 @@ public class XMLEmbedEditorTest {
 		when(text.getText()).thenReturn("<abc>test</abc>");
 		assertNotNull(styler.getLexer());
 		styler.parse(text);
-		verify(text, times(1)).setStyleRanges((StyleRange[]) any());
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testParseWithoutLexer() {
 		when(text.getText()).thenReturn("<abc>test</abc>");
 		styler.parse(text);
-		verify(text, times(1)).setStyleRanges((StyleRange[]) any());
+		Assert.assertNotNull(styler.getStylesPeyLine(1, 0, 0));
 	}
 
 	@Test
 	public void testGetColorForToken() {
-		// assertNotNull(styler.getColor());
+		Token token = Mockito.mock(Token.class);
+		when(token.getType()).thenReturn(XMLLexer.CDATA);
+		Color color = styler.getColor(Mockito.mock(XMLLexer.class), token, null);
+		assertNotNull(color);
 	}
 }
