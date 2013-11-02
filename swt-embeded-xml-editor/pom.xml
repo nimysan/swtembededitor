@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.nimysan.eclipse</groupId>
 	<artifactId>swt-embed-xml-editor</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${version}</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -71,6 +71,49 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>assembly:package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<!-- The filename of the assembled distribution file defualt ${project.build.finalName} -->
+							<finalName>${project.build.finalName}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<!-- A list of descriptor files path to generate from -->
+							<descriptors>
+								<descriptor>assembly/assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- jar plug in -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<!-- <excludes> <exclude>**/reg.properties</exclude> <exclude>**/database.properties</exclude> 
+						<exclude>**/log4j.properties</exclude> </excludes> -->
+					<archive>
+						<manifest>
+							<mainClass>org.nimy.eclipse.editor.xml.ui.CosEditor</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>conf/</Class-Path>
+						</manifestEntries>
+					</archive>
+
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
