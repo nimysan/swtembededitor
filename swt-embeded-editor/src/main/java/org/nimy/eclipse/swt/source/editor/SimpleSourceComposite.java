@@ -48,7 +48,7 @@ public class SimpleSourceComposite extends Composite {
 		this.styledText.addLineStyleListener(new LineStyleListener() {
 			public void lineGetStyle(LineStyleEvent event) {
 				int lineNumber = SimpleSourceComposite.this.styledText.getLineAtOffset(event.lineOffset);
-				event.bulletIndex = (lineNumber + 1);
+				event.bulletIndex = (lineNumber);
 
 				StyleRange style = new StyleRange();
 				style.foreground = Display.getDefault().getSystemColor(9);
