@@ -9,8 +9,8 @@
 		<maven.compile.deprecation>off</maven.compile.deprecation>
 	</properties>
 	<modules>
-		<module>swt-embeded-source-editor</module>
 		<module>swt-embeded-xml-editor</module>
+		<module>swt-embeded-editor</module>
 	</modules>
 	<build>
 		<plugins>

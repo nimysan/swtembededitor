@@ -65,7 +65,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.nimysan.eclipse</groupId>
-			<artifactId>swt-embed-source-editor</artifactId>
+			<artifactId>swt-embed-editor</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
