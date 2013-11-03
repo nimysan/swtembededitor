@@ -150,6 +150,32 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			<!-- Copy images inside icons to targer/classes -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<configuration>
+							<tasks>
+
+								<!-- Place any ant task here. You can add anything you can add between 
+									<target> and </target> in a build.xml. -->
+								<copy todir="target/classes/org/nimy/eclipse/editor/xml/icons">
+									<fileset dir="src/main/java/org/nimy/eclipse/editor/xml/icons">
+										<exclude name="**/*.java" />
+									</fileset>
+								</copy>
+
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>
