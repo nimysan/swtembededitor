@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.nimysan.eclipse</groupId>
 	<artifactId>swt-embed-editor</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -12,16 +12,34 @@
 		<antlr.version>4.1</antlr.version>
 	</properties>
 	<dependencies>
+		<!-- SWT -->
+		<!-- <dependency> <groupId>org.eclipse.swt</groupId> <artifactId>org.eclipse.swt.win32.win32.x86</artifactId> 
+			<version>${swt.version}</version> </dependency> <dependency> <groupId>org.eclipse.jface</groupId> 
+			<artifactId>org.eclipse.jface</artifactId> <version>${swt.jface.version}</version> 
+			</dependency> -->
+		<!-- SWT -->
+		<!-- Specific SWT version -->
 		<dependency>
-			<groupId>org.eclipse.swt</groupId>
-			<artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
-			<version>${swt.version}</version>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>org.eclipse.core.commands</artifactId>
+			<version>3.2.0.I20060605-1400</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.equinox</groupId>
+			<artifactId>org.eclipse.equinox.common</artifactId>
+			<version>3.2.0.v20060603</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jface</groupId>
 			<artifactId>org.eclipse.jface</artifactId>
-			<version>${swt.jface.version}</version>
+			<version>3.2.1.M20060908-1000</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.swt.win32</groupId>
+			<artifactId>org.eclipse.swt.win32.win32</artifactId>
+			<version>x86_3.2.1.v3235</version>
+		</dependency>
+		<!-- Specific SWT version -->
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
