@@ -1,6 +1,5 @@
 package org.nimy.eclipse.editor.xml.ui;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +12,6 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -29,6 +27,7 @@ import org.merlotxml.util.xml.GrammarDocument;
 import org.merlotxml.util.xml.GrammarSimpleType;
 import org.nimy.eclipse.editor.xml.grammar.CacheGrammar;
 import org.nimy.eclipse.editor.xml.icons.ImageIndex;
+import org.nimy.eclipse.swt.source.editor.utils.UIResourceContext;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -37,7 +36,6 @@ import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
 public class CosEditor extends ApplicationWindow {
 	private static final Logger logger = Logger.getLogger(CosEditor.class);
-
 	public static String rootElement = null;
 	public static final String NAME = "Cosmact XML";
 	private CacheGrammar cache = CacheGrammar.getInstance();
@@ -52,10 +50,12 @@ public class CosEditor extends ApplicationWindow {
 	}
 
 	public static void main(String[] args) {
-		CosEditor editor = new CosEditor(null);
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		CosEditor editor = new CosEditor(shell);
 		editor.setBlockOnOpen(true);
 		editor.open();
-		Display.getCurrent().dispose();
+		display.dispose();
 	}
 
 	protected Control createContents(Composite parent) {
@@ -259,7 +259,7 @@ public class CosEditor extends ApplicationWindow {
 	protected void configureShell(Shell shell) {
 		shell.setSize(600, 500);
 		shell.setText("Cosmact XML");
-		shell.setImage(ImageDescriptor.createFromFile(ImageIndex.class, "XMLFile.gif").createImage());
+		shell.setImage(UIResourceContext.getInstance().getImage(ImageIndex.class, "XMLFile.gif"));
 
 		super.configureShell(shell);
 	}

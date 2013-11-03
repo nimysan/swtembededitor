@@ -1,6 +1,5 @@
 package org.nimy.eclipse.editor.xml.ui;
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellEditor;
@@ -45,6 +43,7 @@ import org.merlotxml.util.xml.GrammarDocument;
 import org.nimy.eclipse.editor.xml.icons.ImageIndex;
 import org.nimy.eclipse.swt.source.editor.EditorBuilder;
 import org.nimy.eclipse.swt.source.editor.SimpleSourceComposite;
+import org.nimy.eclipse.swt.source.editor.utils.UIResourceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -55,7 +54,7 @@ import com.sun.org.apache.xml.internal.serialize.DOMSerializerImpl;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "restriction" })
 public class XmlDesignEditor extends Composite {
 	public static final String TREE_COLUMN_1 = "name";
 	public static final String TREE_COLUMN_2 = "value";
@@ -79,7 +78,7 @@ public class XmlDesignEditor extends Composite {
 
 	private GrammarDocument grammars = null;
 
-	static ImageRegistry ir = null;
+	static ImageRegistry imageRegistry = null;
 	private CTabFolder modeSwitcher;
 	private SimpleSourceComposite xmlSourceEditor;
 
@@ -156,7 +155,7 @@ public class XmlDesignEditor extends Composite {
 
 		treeColumn.setWidth(200);
 		treeColumn.setText("xml");
-		treeColumn.setImage(ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/proinst_obj.gif").createImage());
+		treeColumn.setImage(UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/proinst_obj.gif"));
 
 		TreeColumn treeColumn1 = new TreeColumn(this.tree, 65536);
 		treeColumn1.setWidth(200);
@@ -385,22 +384,15 @@ public class XmlDesignEditor extends Composite {
 	}
 
 	static {
-		ir = JFaceResources.getImageRegistry();
-		ir.put("Process Instruction", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/proinst_obj.gif"));
-
-		ir.put("Attribute", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/attribute_obj.gif"));
-
-		ir.put("CDATA Section", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/cdatasection.gif"));
-
-		ir.put("Comment", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/comment_obj.gif"));
-
-		ir.put("DCOTYPE", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/doctype.gif"));
-
-		ir.put("Element", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/element_obj.gif"));
-
-		ir.put("#PCDATA", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/text.gif"));
-
-		ir.put("Attribute Required", ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/att_req_obj.gif"));
+		imageRegistry = JFaceResources.getImageRegistry();
+		imageRegistry.put("Process Instruction", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/proinst_obj.gif"));
+		imageRegistry.put("Attribute", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/attribute_obj.gif"));
+		imageRegistry.put("CDATA Section", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/cdatasection.gif"));
+		imageRegistry.put("Comment", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/comment_obj.gif"));
+		imageRegistry.put("DCOTYPE", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/doctype.gif"));
+		imageRegistry.put("Element", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/element_obj.gif"));
+		imageRegistry.put("#PCDATA", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/text.gif"));
+		imageRegistry.put("Attribute Required", UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/att_req_obj.gif"));
 	}
 
 	class CellModifier implements ICellModifier {
@@ -476,7 +468,7 @@ public class XmlDesignEditor extends Composite {
 					Entity c = (Entity) element;
 					this.logger.debug("Fill iamge" + c.getName() + " Node.");
 
-					return XmlDesignEditor.ir.get(c.getType());
+					return XmlDesignEditor.imageRegistry.get(c.getType());
 				}
 				return null;
 			}

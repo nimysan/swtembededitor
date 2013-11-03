@@ -4,7 +4,6 @@ package org.nimy.eclipse.editor.xml.ui;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -20,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.nimy.eclipse.editor.xml.icons.ImageIndex;
+import org.nimy.eclipse.swt.source.editor.utils.UIResourceContext;
 
 public class BrowserCon extends Composite {
 	private TreeViewer treeViewer = null;
@@ -50,7 +50,7 @@ public class BrowserCon extends Composite {
 
 		treeColumn.setWidth(200);
 		treeColumn.setText("xml");
-		treeColumn.setImage(ImageDescriptor.createFromFile(ImageIndex.class, "full/obj16/proinst_obj.gif").createImage());
+		treeColumn.setImage(UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/proinst_obj.gif"));
 
 		TreeColumn treeColumn1 = new TreeColumn(this.tree, 65536);
 		treeColumn1.setWidth(200);

@@ -6,9 +6,9 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.FileDialog;
 import org.nimy.eclipse.editor.xml.icons.ImageIndex;
+import org.nimy.eclipse.swt.source.editor.utils.UIResourceContext;
 
 public class EditorActionManager {
 	private CosEditor editor = null;
@@ -121,7 +121,7 @@ public class EditorActionManager {
 	private final class SaveAsFile extends Action {
 		public SaveAsFile() {
 			setText("Save &As...");
-			setImageDescriptor(ImageDescriptor.createFromFile(ImageIndex.class, "full/wizardtool/saveas_edit.png"));
+			setImageDescriptor(UIResourceContext.getInstance().getImageDescriptor(ImageIndex.class, "full/wizardtool/saveas_edit.png"));
 		}
 
 		public void run() {
@@ -138,7 +138,7 @@ public class EditorActionManager {
 	private final class SaveAllFile extends Action {
 		public SaveAllFile() {
 			setText("Sav&e All@Ctrl+Shift+S");
-			setImageDescriptor(ImageDescriptor.createFromFile(ImageIndex.class, "full/wizardtool/saveall_edit.png"));
+			setImageDescriptor(UIResourceContext.getInstance().getImageDescriptor(ImageIndex.class, "full/wizardtool/saveall_edit.png"));
 		}
 
 		public void run() {
@@ -149,7 +149,7 @@ public class EditorActionManager {
 	private final class SaveFile extends Action {
 		public SaveFile() {
 			setText("&Save@Ctrl+S");
-			setImageDescriptor(ImageDescriptor.createFromFile(ImageIndex.class, "full/wizardtool/save_edit.png"));
+			setImageDescriptor(UIResourceContext.getInstance().getImageDescriptor(ImageIndex.class, "full/wizardtool/save_edit.png"));
 		}
 
 		public void run() {
@@ -170,7 +170,7 @@ public class EditorActionManager {
 	private final class NewFile extends Action {
 		public NewFile() {
 			setText("&New@Alt+Shift+N");
-			setImageDescriptor(ImageDescriptor.createFromFile(ImageIndex.class, "full/wizardtool/newfile_wiz.png"));
+			setImageDescriptor(UIResourceContext.getInstance().getImageDescriptor(ImageIndex.class, "full/wizardtool/newfile_wiz.png"));
 		}
 
 		public void run() {

@@ -3,7 +3,6 @@ package org.nimy.eclipse.editor.xml.ui;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -13,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.nimy.eclipse.swt.source.editor.utils.UIResourceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -139,8 +139,8 @@ public class XmlTree {
 
 	private void initIR() {
 		this.ir = new ImageRegistry();
-		this.ir.put("element", ImageDescriptor.createFromFile(XmlTree.class, "element.ico"));
-		this.ir.put("attribute", ImageDescriptor.createFromFile(XmlTree.class, "attribute.ico"));
-		this.ir.put("comment", ImageDescriptor.createFromFile(XmlTree.class, "comment.ico"));
+		this.ir.put("element", UIResourceContext.getInstance().getImage(XmlTree.class, "element.ico"));
+		this.ir.put("attribute", UIResourceContext.getInstance().getImage(XmlTree.class, "attribute.ico"));
+		this.ir.put("comment", UIResourceContext.getInstance().getImage(XmlTree.class, "comment.ico"));
 	}
 }
