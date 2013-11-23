@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -25,6 +28,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Listener;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -40,6 +45,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.merlotxml.util.xml.GrammarDocument;
+import org.nimy.ec.ipse.editor.xml.exception.CommonXmlException;
 import org.nimy.eclipse.editor.xml.icons.ImageIndex;
 import org.nimy.eclipse.swt.source.editor.EditorBuilder;
 import org.nimy.eclipse.swt.source.editor.SimpleSourceComposite;
@@ -56,9 +62,14 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 @SuppressWarnings({ "unchecked", "restriction" })
 public class XmlDesignEditor extends Composite {
+
+	private static final String VIEW_DESIGN = "DESIGN";
+	private static final String VIEW_SOURCE = "SOURCE";
+
 	public static final String TREE_COLUMN_1 = "name";
 	public static final String TREE_COLUMN_2 = "value";
 	private boolean ingoreRootAttibute = false;
+	private Observable observable = new Observable();
 
 	private ViewActionsManager actions = null;
 
@@ -106,19 +117,19 @@ public class XmlDesignEditor extends Composite {
 		modeSwitcher.setUnselectedCloseVisible(true);
 		modeSwitcher.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				CTabItem selection = modeSwitcher.getSelection();
-				if (selection.getData("type") == "SOURCE") {
-					xmlSourceEditor.setContent(transferToPlainSource(), true);
-				} else if (selection.getData("type") == "DESIGN") {
-					String plainSource = xmlSourceEditor.getStyledText().getText();
-					try {
-						Object generalInputFromString = generalInputFromString(plainSource);
-						treeViewer.setInput(generalInputFromString);
-					} catch (Exception e) {
-						e.printStackTrace();// TODO how to handle this
-											// exception?
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				try {
+					CTabItem selection = modeSwitcher.getSelection();
+					if (selection.getData("type") == VIEW_SOURCE) {
+						xmlSourceEditor.setContent(designToXmlString(), true);
+					} else if (selection.getData("type") == VIEW_DESIGN) {
+						xmlStringToDesign();
 					}
+				} catch (Exception e) {
+					logger.error("Convert xml failed!", e);
+					MessageDialog.openError(getShell(), "Convert XML failed!", e.getMessage());
+				} finally {
+					observable.notifyObservers(XmlDesignEditor.this);
 				}
 
 			}
@@ -128,15 +139,22 @@ public class XmlDesignEditor extends Composite {
 	private void createSourceViewMode(CTabFolder mode) {
 		xmlSourceEditor = EditorBuilder.buildXmlEditor(mode, SWT.NONE);
 		CTabItem xmlSourceViewItem = new CTabItem(mode, SWT.NONE);
-		xmlSourceViewItem.setData("type", "SOURCE");
+		xmlSourceViewItem.setData("type", VIEW_SOURCE);
 		xmlSourceViewItem.setText("Source");
 		xmlSourceViewItem.setControl(xmlSourceEditor);
+	}
+
+	public void addObserver(final Observer observer) {
+		if (observer == null) {
+			return;
+		}
+		this.observable.addObserver(observer);
 	}
 
 	private void createTreeViewMode(CTabFolder mode) {
 		CTabItem xmlTreeViewItem = new CTabItem(mode, SWT.NONE);
 		xmlTreeViewItem.setText("Design");
-		xmlTreeViewItem.setData("type", "DESIGN");
+		xmlTreeViewItem.setData("type", VIEW_DESIGN);
 		this.tree = new Tree(mode, 68354);
 		xmlTreeViewItem.setControl(this.tree);
 		this.treeViewer = new TreeViewer(this.tree);
@@ -225,7 +243,7 @@ public class XmlDesignEditor extends Composite {
 		return null;
 	}
 
-	public Object generalInputFromString(String xmlString) {
+	public Object generalInputFromString(String xmlString) throws CommonXmlException {
 		if (xmlString != null) {
 			StringReader sr = new StringReader(xmlString);
 			DOMParser parser = new DOMParser();
@@ -236,10 +254,10 @@ public class XmlDesignEditor extends Composite {
 				return doc2TreeItem(this.doc);
 			} catch (IOException ioe) {
 				logger.error("Input error.", ioe);
-				return null;
+				throw new CommonXmlException(ioe, "Convert to xml failed!", xmlString);
 			} catch (SAXException saxe) {
 				logger.error("Input error.", saxe);
-				return null;
+				throw new CommonXmlException(saxe, "Convert to xml failed!", xmlString);
 			}
 		}
 		return null;
@@ -294,7 +312,8 @@ public class XmlDesignEditor extends Composite {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public String saveToString() {
+	private String designToXmlString() throws CommonXmlException {
+		// sync to design at first and then output
 		String result = null;
 		List input = (List) this.treeViewer.getInput();
 		if (input != null) {
@@ -303,11 +322,17 @@ public class XmlDesignEditor extends Composite {
 				DOMSerializerImpl serializer = new DOMSerializerImpl();
 				result = serializer.writeToString(doc);
 			} catch (Exception e) {
-				logger.error(e);
+				throw new CommonXmlException(e, "Read Xml content failed!", "");
 			}
 		}
 		logger.debug("Xml String--->" + result);
 		return result;
+	}
+
+	private void xmlStringToDesign() throws CommonXmlException {
+		String plainSource = xmlSourceEditor.getStyledText().getText();
+		Object generalInputFromString = generalInputFromString(plainSource);
+		treeViewer.setInput(generalInputFromString);
 	}
 
 	public ViewActionsManager getActions() {
@@ -340,15 +365,6 @@ public class XmlDesignEditor extends Composite {
 
 	public void setDoc(Document doc) {
 		this.doc = doc;
-	}
-
-	/**
-	 * Read current input in design view to source view
-	 * 
-	 * @return
-	 */
-	public String transferToPlainSource() {
-		return saveToString();
 	}
 
 	public TreeViewer getTreeViewer() {
@@ -568,5 +584,19 @@ public class XmlDesignEditor extends Composite {
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
+	}
+
+	/**
+	 * Get final XML content
+	 * 
+	 * @return
+	 */
+	public String getXmlContent() throws CommonXmlException {
+		CTabItem selection = modeSwitcher.getSelection();
+		if (selection.getData("type") == VIEW_SOURCE) {
+			// first sync the xml source string and validate it
+			xmlStringToDesign();
+		}
+		return designToXmlString();
 	}
 }
