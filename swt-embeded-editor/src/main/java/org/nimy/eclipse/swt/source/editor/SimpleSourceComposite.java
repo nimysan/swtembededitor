@@ -2,6 +2,7 @@ package org.nimy.eclipse.swt.source.editor;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
@@ -34,7 +35,7 @@ public class SimpleSourceComposite extends Composite {
 	}
 
 	private void createControls() {
-		this.styledText = new StyledText(this, 2560);
+		this.styledText = new StyledText(this, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		Font font = new Font(getShell().getDisplay(), "Courier New", 12, 0);
 		this.styledText.setFont(font);
 		GridLayoutFactory.swtDefaults().numColumns(1).applyTo(this);

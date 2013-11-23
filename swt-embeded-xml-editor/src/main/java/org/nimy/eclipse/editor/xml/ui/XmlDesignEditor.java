@@ -137,7 +137,7 @@ public class XmlDesignEditor extends Composite {
 	}
 
 	private void createSourceViewMode(CTabFolder mode) {
-		xmlSourceEditor = EditorBuilder.buildXmlEditor(mode, SWT.NONE);
+		xmlSourceEditor = EditorBuilder.buildXmlEditor(mode, SWT.BORDER);
 		CTabItem xmlSourceViewItem = new CTabItem(mode, SWT.NONE);
 		xmlSourceViewItem.setData("type", VIEW_SOURCE);
 		xmlSourceViewItem.setText("Source");

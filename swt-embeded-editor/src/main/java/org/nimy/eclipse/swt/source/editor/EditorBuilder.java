@@ -13,7 +13,7 @@ public final class EditorBuilder {
 		lineStyler.setColorSchema(new XmlColorSchema());
 		lineStyler.setFontSchema(new XmlFontSchema());
 
-		SimpleSourceComposite editor = new SimpleSourceComposite(lineStyler, parent, 2048);
+		SimpleSourceComposite editor = new SimpleSourceComposite(lineStyler, parent, style);
 		editor.setFormatter(new XmlTextFormatter());
 		return editor;
 	}
