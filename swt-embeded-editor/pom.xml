@@ -122,6 +122,18 @@
 						</goals>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.antlr</groupId>
+						<artifactId>antlr4-runtime</artifactId>
+						<version>${antlr.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.antlr</groupId>
+						<artifactId>antlr4</artifactId>
+						<version>${antlr.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<!-- Add source to build system -->
 			<plugin>
