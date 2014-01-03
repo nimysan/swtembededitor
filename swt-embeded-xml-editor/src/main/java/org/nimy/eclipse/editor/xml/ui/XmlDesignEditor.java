@@ -28,8 +28,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Listener;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -169,14 +167,15 @@ public class XmlDesignEditor extends Composite {
 		this.tree.setHeaderVisible(true);
 		this.tree.setLayoutData(gridData);
 		this.tree.setLinesVisible(true);
-		TreeColumn treeColumn = new TreeColumn(this.tree, 65536);
+		TreeColumn treeColumn = new TreeColumn(this.tree, SWT.BORDER);
 
 		treeColumn.setWidth(200);
 		treeColumn.setText("xml");
 		treeColumn.setImage(UIResourceContext.getInstance().getImage(ImageIndex.class, "full/obj16/proinst_obj.gif"));
 
-		TreeColumn treeColumn1 = new TreeColumn(this.tree, 65536);
-		treeColumn1.setWidth(200);
+		TreeColumn treeColumn1 = new TreeColumn(this.tree, SWT.BORDER);
+		treeColumn1.setWidth(500);
+		treeColumn1.setResizable(true);
 		treeColumn1.setText("version=\"1.0\" encoding=\"UTF-8\"");
 
 		this.treeViewer.setContentProvider(new ContentProvider());
@@ -199,6 +198,10 @@ public class XmlDesignEditor extends Composite {
 			}
 
 			public void mouseDown(MouseEvent e) {
+				// Tree source = (Tree) e.getSource();
+				// TreeItem treeItem = source.getSelection()[0];
+				// Rectangle bounds = treeItem.getBounds(1);
+				// System.out.println(bounds.contains(e.x, e.y));
 			}
 
 			public void mouseUp(MouseEvent e) {
@@ -213,8 +216,7 @@ public class XmlDesignEditor extends Composite {
 	private void initCellEditor() {
 		String[] columnProperties = { "name", "value" };
 		this.treeViewer.setColumnProperties(columnProperties);
-
-		CellEditor[] cellEditors = new CellEditor[3];
+		CellEditor[] cellEditors = new CellEditor[2];
 		cellEditors[0] = null;
 		cellEditors[1] = new CustomizedTextCellEditor(this.treeViewer.getTree());
 		this.treeViewer.setCellEditors(cellEditors);
