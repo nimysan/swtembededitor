@@ -83,6 +83,8 @@ public class XmlDesignEditor extends Composite {
 
 	private TreeViewer treeViewer = null;
 
+	private Object cacheTreeExpandPath = null;
+
 	private IMenuManager menuManager = null;
 
 	private GrammarDocument grammars = null;
@@ -193,7 +195,6 @@ public class XmlDesignEditor extends Composite {
 		this.treeViewer.getTree().addMouseListener(new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {
 				TreeSelection selection = (TreeSelection) XmlDesignEditor.this.treeViewer.getSelection();
-
 				XmlDesignEditor.this.treeViewer.setSelection(selection);
 			}
 
@@ -318,6 +319,7 @@ public class XmlDesignEditor extends Composite {
 		// sync to design at first and then output
 		String result = null;
 		List input = (List) this.treeViewer.getInput();
+		this.cacheTreeExpandPath = this.treeViewer.getExpandedTreePaths();
 		if (input != null) {
 			try {
 				Document doc = Entity2Node.entitys2Doc(input);
@@ -335,6 +337,10 @@ public class XmlDesignEditor extends Composite {
 		String plainSource = xmlSourceEditor.getStyledText().getText();
 		Object generalInputFromString = generalInputFromString(plainSource);
 		treeViewer.setInput(generalInputFromString);
+		if (cacheTreeExpandPath != null) {
+			treeViewer.expandToLevel(cacheTreeExpandPath, TreeViewer.ALL_LEVELS);
+		}
+		treeViewer.expandAll();
 	}
 
 	public ViewActionsManager getActions() {

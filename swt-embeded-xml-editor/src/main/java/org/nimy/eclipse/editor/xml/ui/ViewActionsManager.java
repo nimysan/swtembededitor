@@ -1,6 +1,7 @@
 package org.nimy.eclipse.editor.xml.ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +23,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.merlotxml.util.xml.GrammarComplexType;
 import org.merlotxml.util.xml.GrammarDocument;
 import org.merlotxml.util.xml.GrammarSimpleType;
+import org.nimy.eclipse.editor.xml.icons.ImageIndex;
+import org.nimy.eclipse.swt.source.editor.utils.UIResourceContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -45,6 +48,10 @@ public class ViewActionsManager {
 	private Action editAttributeAction = null;
 
 	private Action editProcessingInstructionAction = null;
+
+	private Action itemUpAction = null;
+
+	private Action itemDownAction = null;
 
 	private GrammarDocument grammars = null;
 
@@ -115,6 +122,9 @@ public class ViewActionsManager {
 					IMenuManager after = new MenuManager("Add &After");
 					mgr.add(after);
 					fillAddAfterMenu(after, now, 3);
+
+					mgr.add(this.itemUpAction);
+					mgr.add(this.itemDownAction);
 				} else if (now.getType() == "#PCDATA") {
 					mgr.add(this.removeAction);
 				} else if (now.getType() == "Process Instruction") {
@@ -133,6 +143,8 @@ public class ViewActionsManager {
 		this.editDoctypeAction = new EditDoctypeAction(this.treeViewer);
 		this.editAttributeAction = new EditAttributeAction(this.treeViewer);
 		this.editProcessingInstructionAction = new EditProcessingInstructionAction(this.treeViewer);
+		this.itemUpAction = new ItemUpAction(this.treeViewer);
+		this.itemDownAction = new ItemDownAction(this.treeViewer);
 	}
 
 	private void fillAddBeforeMenu(IMenuManager menu, Entity now, int insertType) {
@@ -278,11 +290,54 @@ public class ViewActionsManager {
 	}
 
 	public void setDoc(Document doc) {
-		doc = doc;
+		this.doc = doc;
 	}
 
 	public boolean isIngoreRootAttribute() {
 		return this.ingoreRootAttribute;
+	}
+
+	private void switchElementPosition(TreeViewer tv, int movePosition) {
+		if (movePosition != 1 && movePosition != -1) {
+			return;
+		}
+		TreeSelection ts = (TreeSelection) tv.getSelection();
+		TreePath[] sel = ts.getPaths();
+		List model;
+		if (ts != null) {
+			List<Entity> list = ViewActionsManager.this.entitySelection(tv);
+			if (list != null) {
+				this.logger.debug("TreeSelection : " + list);
+				model = (List) tv.getInput();
+				this.logger.debug("Data Model:" + model);
+				Entity element = null;
+				for (Entity e : list) {
+					if (e != null && "Element".equals(e.getType())) {
+						element = e;
+						this.logger.debug("Move Entity :" + e);
+						// only move one
+						break;
+					}
+				}
+				if (element != null) {
+					list = element.getParent().getChildren();
+					int currentIndex = list.indexOf(element);
+					if (currentIndex == 0) {
+						return;
+					}
+					int swapIndex = currentIndex + movePosition;
+					if (swapIndex >= 0 && swapIndex < list.size()) {
+						Entity entity = list.get(swapIndex);
+						if (entity != null && "Element".equals(entity.getType())) {
+							// move up
+							Collections.swap(list, currentIndex, swapIndex);
+						}
+					}
+				}
+			}
+		}
+
+		tv.refresh();
 	}
 
 	static {
@@ -658,6 +713,54 @@ public class ViewActionsManager {
 
 	}
 
+	@SuppressWarnings("unused")
+	private final class ItemUpAction extends Action {
+		private final Logger logger = Logger.getLogger(ItemUpAction.class);
+		private TreeViewer tv = null;
+
+		public ItemUpAction(TreeViewer v) {
+			this.tv = v;
+			setText("Move U&p");
+			setImageDescriptor(UIResourceContext.getInstance().getImageDescriptor(ImageIndex.class, "full/dtool16/doubleArrowUp.png"));
+		}
+
+		public void run() {
+			switchElementPosition(getTv(), -1);
+		}
+
+		public TreeViewer getTv() {
+			return this.tv;
+		}
+
+		public void setTv(TreeViewer tv) {
+			this.tv = tv;
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private final class ItemDownAction extends Action {
+		private final Logger logger = Logger.getLogger(ItemDownAction.class);
+		private TreeViewer tv = null;
+
+		public ItemDownAction(TreeViewer v) {
+			this.tv = v;
+			setText("Move Dow&n");
+			setImageDescriptor(UIResourceContext.getInstance().getImageDescriptor(ImageIndex.class, "full/dtool16/doubleArrowDown.png"));
+		}
+
+		public void run() {
+			switchElementPosition(getTv(), 1);
+		}
+
+		public TreeViewer getTv() {
+			return this.tv;
+		}
+
+		public void setTv(TreeViewer tv) {
+			this.tv = tv;
+		}
+	}
+
 	private final class RemoveAction extends Action {
 		private final Logger logger = Logger.getLogger(RemoveAction.class);
 
@@ -669,22 +772,7 @@ public class ViewActionsManager {
 		}
 
 		public void run() {
-			TreeSelection ts = (TreeSelection) this.tv.getSelection();
-			TreePath[] sel = ts.getPaths();
-			List model;
-			if (ts != null) {
-				List<Entity> list = ViewActionsManager.this.entitySelection(this.tv);
-				if (list != null) {
-					this.logger.debug("TreeSelection : " + list);
-					model = (List) this.tv.getInput();
-					this.logger.debug("Data Model:" + model);
-					for (Entity e : list) {
-						this.logger.debug("Remove Result :" + del(e, model));
-					}
-				}
-			}
-
-			this.tv.remove(sel);
+			switchElementPosition(getTv(), 1);
 		}
 
 		private boolean del(Entity des, List<Entity> source) {
