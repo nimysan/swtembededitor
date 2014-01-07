@@ -322,9 +322,6 @@ public class ViewActionsManager {
 				if (element != null) {
 					list = element.getParent().getChildren();
 					int currentIndex = list.indexOf(element);
-					if (currentIndex == 0) {
-						return;
-					}
 					int swapIndex = currentIndex + movePosition;
 					if (swapIndex >= 0 && swapIndex < list.size()) {
 						Entity entity = list.get(swapIndex);
