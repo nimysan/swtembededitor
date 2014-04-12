@@ -769,7 +769,22 @@ public class ViewActionsManager {
 		}
 
 		public void run() {
-			switchElementPosition(getTv(), 1);
+			TreeSelection ts = (TreeSelection) this.tv.getSelection();
+			TreePath[] sel = ts.getPaths();
+			List model;
+			if (ts != null) {
+				List<Entity> list = ViewActionsManager.this.entitySelection(this.tv);
+				if (list != null) {
+					this.logger.debug("TreeSelection : " + list);
+					model = (List) this.tv.getInput();
+					this.logger.debug("Data Model:" + model);
+					for (Entity e : list) {
+						this.logger.debug("Remove Result :" + del(e, model));
+					}
+				}
+			}
+
+			this.tv.remove(sel);
 		}
 
 		private boolean del(Entity des, List<Entity> source) {
